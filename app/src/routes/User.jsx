@@ -1,18 +1,17 @@
 import Axios from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
 import { userProfile } from '../store'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function User() {
 	const [editMode, setEditMode] = useState(false)
 	const token = useSelector(state => state.token)
 	const firstName = useSelector(state => state.firstName)
 	const lastName = useSelector(state => state.lastName)
+	const userDataLoaded = useSelector(state => state.userDataLoaded)
 	const dispatch = useDispatch()
-	console.log(localStorage.getItem('token'))
 	let newFirstName = ''
 	let newLastName = ''
-
 	const handleSubmit = e => {
 		e.preventDefault()
 		Axios.put(
@@ -31,14 +30,19 @@ export default function User() {
 				console.log(error)
 			})
 	}
+	useEffect(() => {
+		console.log(userDataLoaded)
+		if (!userDataLoaded && token != null) {
+			Axios.post('http://localhost:3001/api/v1/user/profile', '', { headers: { Authorization: `Bearer ${token}` } })
+				.then(function (response) {
+					dispatch(userProfile(response.data.body))
+				})
+				.catch(function (error) {
+					console.log(error)
+				})
+		}
+	})
 
-	Axios.post('http://localhost:3001/api/v1/user/profile', '', { headers: { Authorization: `Bearer ${token}` } })
-		.then(function (response) {
-			dispatch(userProfile(response.data.body))
-		})
-		.catch(function (error) {
-			console.log(error)
-		})
 	return (
 		<main className="main bg-dark">
 			<div className="header">

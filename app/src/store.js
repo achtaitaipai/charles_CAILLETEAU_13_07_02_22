@@ -6,6 +6,7 @@ const initialState = {
 	email: '',
 	token: '',
 	logged: false,
+	userDataLoaded: false,
 }
 
 // actions creators
@@ -35,6 +36,7 @@ function reducer(state = initialState, action) {
 				lastName: action.playload.userInfos.lastName,
 				email: action.playload.userInfos.email,
 				password: action.playload.userInfos.password,
+				userDataLoaded: true,
 			}
 			break
 

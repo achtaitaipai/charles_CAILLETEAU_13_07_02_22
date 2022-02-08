@@ -1,13 +1,14 @@
 import Axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { logIn } from '../store.js'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function SignIn() {
 	const dispatch = useDispatch()
 	const logged = useSelector(state => state.logged)
-	let userNameValue, passWordValue, rememberValue
+	let userNameValue = 'tony@stark.com',
+		passWordValue = 'password123',
+		rememberValue = false
 	const navigate = useNavigate()
 
 	function onSubmit(e) {
