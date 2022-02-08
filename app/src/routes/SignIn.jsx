@@ -1,38 +1,36 @@
-import Axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { logIn } from '../store.js'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { signInPost, setToken } from '../features/signIn'
+import { isLogged } from '../utils/selector'
+import { useStore, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 export default function SignIn() {
-	const dispatch = useDispatch()
-	const logged = useSelector(state => state.logged)
+	const store = useStore()
+	const logged = useSelector(isLogged())
+	const localToken = window.localStorage.getItem('token')
 	let userNameValue = 'tony@stark.com',
 		passWordValue = 'password123',
 		rememberValue = false
 	const navigate = useNavigate()
 
+	useEffect(() => {
+		if (localToken) {
+			setToken(store, localToken)
+			navigate('/user', { replace: true })
+		}
+	}, [localToken, store])
+
 	function onSubmit(e) {
 		e.preventDefault()
-		Axios.post('http://localhost:3001/api/v1/user/login', {
-			email: userNameValue,
-			password: passWordValue,
-		})
-			.then(function (response) {
-				dispatch(logIn(response.data.body.token))
-				if (rememberValue) localStorage.setItem('token', response.data.body.token)
-				navigate('../user', { replace: true })
-			})
-			.catch(function (error) {
-				console.log(error)
-			})
+		signInPost(store, userNameValue, passWordValue, rememberValue)
 	}
 
 	return (
 		<main className="main bg-dark">
+			{logged && <Navigate to="/user" replace={true} />}
 			<section className="sign-in-content">
 				<i className="fa fa-user-circle sign-in-icon"></i>
 				<h1>Sign In</h1>
-				<h2>{logged ? 'logged' : 'not-logged'}</h2>
 				<form>
 					<div className="input-wrapper">
 						<label htmlFor="username">Username</label>

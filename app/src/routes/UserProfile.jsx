@@ -1,17 +1,21 @@
-import Axios from 'axios'
-import { useSelector, useDispatch } from 'react-redux'
-import { userProfile } from '../store'
 import { useState, useEffect } from 'react'
+import { useStore, useSelector } from 'react-redux'
+import { getTokken, getNames } from '../utils/selector'
+import { userProfilePost, userProfileEditNames } from '../features/userProfile'
+import Axios from 'axios'
 
 export default function User() {
 	const [editMode, setEditMode] = useState(false)
-	const token = useSelector(state => state.token)
-	const firstName = useSelector(state => state.firstName)
-	const lastName = useSelector(state => state.lastName)
-	const userDataLoaded = useSelector(state => state.userDataLoaded)
-	const dispatch = useDispatch()
+	const token = useSelector(getTokken())
+	const names = useSelector(getNames())
 	let newFirstName = ''
 	let newLastName = ''
+	const store = useStore()
+
+	useEffect(() => {
+		userProfilePost(store, token)
+	}, [store, token])
+
 	const handleSubmit = e => {
 		e.preventDefault()
 		Axios.put(
@@ -23,25 +27,14 @@ export default function User() {
 			{ headers: { Authorization: `Bearer ${token}` } }
 		)
 			.then(function (response) {
-				dispatch(userProfile(response.data.body))
+				userProfileEditNames(store, newFirstName, newLastName)
+				// dispatch(userProfile(response.data.body))
 				setEditMode(false)
 			})
 			.catch(function (error) {
 				console.log(error)
 			})
 	}
-	useEffect(() => {
-		console.log(userDataLoaded)
-		if (!userDataLoaded && token != null) {
-			Axios.post('http://localhost:3001/api/v1/user/profile', '', { headers: { Authorization: `Bearer ${token}` } })
-				.then(function (response) {
-					dispatch(userProfile(response.data.body))
-				})
-				.catch(function (error) {
-					console.log(error)
-				})
-		}
-	})
 
 	return (
 		<main className="main bg-dark">
@@ -49,7 +42,7 @@ export default function User() {
 				<h1>
 					Welcome back
 					<br />
-					<span className="account-name">{!editMode && firstName + ' ' + lastName}</span>
+					<span className="account-name">{!editMode && names.firstName + ' ' + names.lastName}</span>
 				</h1>
 				{!editMode && (
 					<button className="edit-button" onClick={() => setEditMode(true)}>
@@ -63,7 +56,7 @@ export default function User() {
 							<input
 								type="text"
 								className="editName-input"
-								placeholder={firstName}
+								placeholder={names.firstName}
 								required
 								pattern="[A-Za-z0-9]{1,20}"
 								onInput={e => {
@@ -73,7 +66,7 @@ export default function User() {
 							<input
 								type="text"
 								className="editName-input"
-								placeholder={lastName}
+								placeholder={names.lastName}
 								required
 								pattern="[A-Za-z0-9]{1,20}"
 								onInput={e => {
