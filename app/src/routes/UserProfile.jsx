@@ -1,18 +1,24 @@
 import { useState, useEffect } from 'react'
 import { useStore, useSelector } from 'react-redux'
-import { getTokken, getNames } from '../utils/selector'
+import { getTokken, getNames, isLogged } from '../utils/selector'
 import { userProfilePost, userProfileEditNames } from '../features/userProfile'
+import { useNavigate } from 'react-router-dom'
 import Axios from 'axios'
 
 export default function User() {
 	const [editMode, setEditMode] = useState(false)
 	const token = useSelector(getTokken())
 	const names = useSelector(getNames())
+	const logged = useSelector(isLogged())
 	let newFirstName = ''
 	let newLastName = ''
 	const store = useStore()
+	const navigate = useNavigate()
 
 	useEffect(() => {
+		if (!logged) {
+			navigate('/sign-in', { replace: true })
+		}
 		userProfilePost(store, token)
 	}, [store, token])
 

@@ -3,7 +3,7 @@ export const isLogged = () => {
 }
 
 export const getTokken = () => {
-	return state => state.signIn.data.token
+	return state => state.signIn.data?.token
 }
 
 export const getNames = () => {

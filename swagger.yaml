@@ -67,6 +67,7 @@ paths:
       description: API for fetching a user profile
       parameters:
         - in: header
+          type: string
           name: Authorization
           description: Attach Bearer JWT token
           required: true
@@ -90,6 +91,7 @@ paths:
       description: API for updating a user profile
       parameters:
         - in: header
+          type: string
           name: Authorization
           description: Attach Bearer JWT token
           required: true
@@ -106,6 +108,128 @@ paths:
           description: User profile retrieved successully
           schema:
             $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+          
+  /user/Accounts:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - User Accounts
+      summary: User Accounts API
+      description: API for fetching list of accounts
+      parameters:
+        - in: header
+          type: string
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: List of accounts retrieved successully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              body:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Account'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /user/Account/{accountId}:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - User Accounts
+      summary: User Account API
+      description: API for fetching transactions of the account
+      parameters:
+        - in: header
+          type: string
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+        - in: path
+          type: number
+          name: accountId
+          description: id of the account
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: List of transactions retrieved successully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              body:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Account'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /user/transaction/{transactionId}:
+    put:
+      security:
+        - Bearer: []
+      tags:
+        - User Accounts
+      summary: User Account API
+      description: API for fetching transactions of the account
+      parameters:
+        - in: header
+          type: string
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+        - in: path
+          type: number
+          name: transactionId
+          description: id of the transaction
+          required: true
+        - in: body
+          name: body
+          description: Update transaction attributes
+          required: true
+          schema:
+            $ref: '#/definitions/Transaction'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction updated successully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              body:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Account'
         '400':
           description: Invalid Fields
         '500':
@@ -164,3 +288,37 @@ definitions:
         type: string
       lastName:
         type: string
+  Account:
+    type: object
+    properties:
+      id:
+        type: integer
+      name : 
+        type: string
+      amount :
+        type : number
+        format : float
+      balance : 
+        type : string
+  Transaction:
+    type: object
+    properties:
+      id:
+        type: integer
+      date : 
+        type: string
+        format: date-type
+      description :
+        type : string
+      amount :
+        type : number
+        format : float
+      balance : 
+        type : number
+        format : float
+      transactionType :
+        type : string
+      category :
+        type : string
+      notes : 
+        type : string

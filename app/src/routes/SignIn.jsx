@@ -18,7 +18,7 @@ export default function SignIn() {
 			setToken(store, localToken)
 			navigate('/user', { replace: true })
 		}
-	}, [localToken, store])
+	}, [localToken, store, localToken])
 
 	function onSubmit(e) {
 		e.preventDefault()
