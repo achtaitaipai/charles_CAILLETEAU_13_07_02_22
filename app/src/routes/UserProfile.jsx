@@ -18,9 +18,10 @@ export default function User() {
 	useEffect(() => {
 		if (!logged) {
 			navigate('/sign-in', { replace: true })
+		} else {
+			userProfilePost(store, token)
 		}
-		userProfilePost(store, token)
-	}, [store, token])
+	}, [store, token, logged, navigate])
 
 	const handleSubmit = e => {
 		e.preventDefault()
