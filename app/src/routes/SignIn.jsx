@@ -1,12 +1,14 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { signInPost, setToken } from '../features/signIn'
-import { isLogged } from '../utils/selector'
+import { isLogged, signInIsLoading, signInError } from '../utils/selector'
 import { useStore, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 
 export default function SignIn() {
 	const store = useStore()
 	const logged = useSelector(isLogged())
+	const loading = useSelector(signInIsLoading())
+	const error = useSelector(signInError())
 	const localToken = window.localStorage.getItem('token')
 	let userNameValue = 'tony@stark.com',
 		passWordValue = 'password123',
@@ -18,7 +20,7 @@ export default function SignIn() {
 			setToken(store, localToken)
 			navigate('/user', { replace: true })
 		}
-	}, [localToken, store, localToken])
+	}, [localToken, store, navigate])
 
 	function onSubmit(e) {
 		e.preventDefault()
@@ -47,6 +49,8 @@ export default function SignIn() {
 					<button className="sign-in-button" onClick={onSubmit}>
 						Sign In
 					</button>
+					{error && <p className="error">'an error occurred while processing your request'</p>}
+					{loading && <p className="loading-Signin">loading...</p>}
 				</form>
 			</section>
 		</main>

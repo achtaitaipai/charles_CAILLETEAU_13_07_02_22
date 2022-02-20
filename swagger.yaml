@@ -229,7 +229,7 @@ paths:
                   accounts:
                     type: array
                     items:
-                      $ref: '#/definitions/Account'
+                      $ref: '#/definitions/Transaction'
         '400':
           description: Invalid Fields
         '500':
